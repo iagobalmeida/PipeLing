@@ -16,6 +16,7 @@
   "author": "Iago Borba de Almeida",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.24.0",
     "dotenv": "^14.1.0",
     "express": "^4.17.2",
     "express-basic-auth": "^1.2.1",

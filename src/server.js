@@ -3,28 +3,29 @@ require('dotenv').config();
 const express = require('express');
 const basicAuth = require('express-basic-auth');
 const mongoose = require('mongoose');
-const db = require('./database/config');
+const routes = require('./routes');
 
 class App {
     constructor() {
         this.express = express();
         
-        this.initDatabase();
-        this.signMiddlwares();
-        this.signRoutes();
+        this.database();
+        this.middlewares();
+        this.routes();
+        this.errorHandling();
 
         this.express.listen(process.env.PORT, () => {
             console.log(`Listening on http://localhost:${process.env.PORT}`);
         })
     }
 
-    initDatabase() {
+    database() {
         mongoose.connect(process.env.DB_URI, () => {
             console.log(`Connected to the database!`);
         });
     }
 
-    signMiddlwares() {
+    middlewares() {
         this.express.use(express.json());
         this.express.use(basicAuth({
             users: {
@@ -34,8 +35,20 @@ class App {
         }));
     }
 
-    signRoutes() {
-        this.express.use(require('./routes'));
+    routes() {
+        this.express.use(routes);
+    }
+
+    errorHandling() {
+      // Logging
+      this.express.use((err, req, res, next) => {
+        console.error(err.stack);
+        next(err);
+      })
+      // Returning
+      this.express.use((err, req, res, next) => {
+        return res.status(500).json({error: err});
+      })
     }
 }
 
