@@ -56,7 +56,7 @@ A Day aggregates all the deals that were made on that date. All the created Deal
 
 `GET /deals`
 
-Returns all the Days that are stored in the database
+Returns all the Deals that are stored in the database
 
 ``` json
     HTTP/1.1 200 OK
@@ -89,8 +89,7 @@ Returns a unique Deal with that ID if it exists.
         "date": "2022-01-18T00:00:00.000Z",
         "status": "sent",
         "__v": 0
-      },
-      ...
+      }
     ]
 ```
 
@@ -98,7 +97,7 @@ Returns a unique Deal with that ID if it exists.
 
 `POST /deal`
 
-This route accepts two body formats, one for direct insertion and other for the PipeDrive webhook integration.
+This route accepts two body formats, one for simple insertion and other for the PipeDrive webhook integration.
 
 - Simple body format:
 
@@ -116,7 +115,7 @@ This route accepts two body formats, one for direct insertion and other for the 
  ... "current": { ... "id": 15, "value": 100, "update_time": "01/18/2022", "person_name": "Iago", "status": "won" ... } ... 
 }`
 
-All the Deals created with this route will be sent to [Bling](https://www.bling.com.br/) and will update its status to `sent` or `not_sent`according to the result.
+All the Deals created with this route will generate an order creation request to [Bling](https://www.bling.com.br/) and will update its status to `sent` or `not_sent`according to the result.
 
 All the Deals created with this route will create or update an existing day with its value.
 
