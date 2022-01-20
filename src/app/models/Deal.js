@@ -7,6 +7,10 @@ const DealSchema = new mongoose.Schema({
     unique: true,
     index: true
   },
+  person_name: {
+    type: String,
+    required: true
+  },
   value: {
     type: Number,
     required: true

@@ -1,55 +1,65 @@
+// Requirements
 require('dotenv').config();
-
 const express = require('express');
 const basicAuth = require('express-basic-auth');
 const mongoose = require('mongoose');
 const routes = require('./routes');
 
+// Enviromentals
+const PORT = process.env.PORT;
+const DB_URI = process.env.DB_URI;
+const AUTH_PASSWORD = process.env.AUTH_PASSWORD;
+
+// Main class
 class App {
-    constructor() {
-        this.express = express();
-        
-        this.database();
-        this.middlewares();
-        this.routes();
-        this.errorHandling();
+  constructor() {
+    this.express = express();
+    this.database();
+    this.middlewares();
+    this.routes();
+    this.errorHandling();
+    this.express.listen(PORT, () => {
+      console.log(`Server up & running.`);
+    })
+  }
 
-        this.express.listen(process.env.PORT, () => {
-            console.log(`Listening on http://localhost:${process.env.PORT}`);
-        })
-    }
+  // Initialize mongoDB
+  database() {
+    mongoose.connect(DB_URI, () => {
+      console.log(`Connected to the database.`);
+    });
+  }
 
-    database() {
-        mongoose.connect(process.env.DB_URI, () => {
-            console.log(`Connected to the database!`);
-        });
-    }
+  // Sign JSON and basicAuth middlewares
+  middlewares() {
+    this.express.use(express.json());
+    this.express.use(basicAuth({
+      users: {
+        admin: AUTH_PASSWORD
+      },
+      challenge: true
+    }));
+  }
 
-    middlewares() {
-        this.express.use(express.json());
-        this.express.use(basicAuth({
-            users: {
-                admin: process.env.AUTH_PASSWORD
-            },
-            challenge: true
-        }));
-    }
+  // Sign routes
+  routes() {
+    this.express.use(routes);
+  }
 
-    routes() {
-        this.express.use(routes);
-    }
-
-    errorHandling() {
-      // Logging
-      this.express.use((err, req, res, next) => {
-        console.error(err.stack);
-        next(err);
-      })
-      // Returning
-      this.express.use((err, req, res, next) => {
-        return res.status(500).json({error: err});
-      })
-    }
+  // Sign error handling postwares 
+  errorHandling() {
+    // Logging
+    this.express.use((err, req, res, next) => {
+      console.error(err.message);
+      next(err);
+    })
+    // Returning
+    this.express.use((err, req, res, next) => {
+      return res.status(500).json({
+        error: err
+      });
+    })
+  }
 }
 
 module.exports = new App().express;
