@@ -18,6 +18,11 @@ Use the start script to start the server.
 npm run start
 ```
 
+### Test it right nowo
+
+`https://PipeLing.iagoalmeida1.repl.co`
+Use this baseUrl to test the API right now.
+
 ## Models
 
 There are two models in the application, the `Day` model and the `Deal` model.
